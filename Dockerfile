@@ -1,13 +1,15 @@
-FROM python:3.9-slim
-
-WORKDIR /app
-
-COPY . .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-EXPOSE 5001
-
-ENV FLASK_APP=app.py
-
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
+name: Resume ci Build
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image with tag
+      run: docker build . --file Dockerfile --tag my-image-name:${{github.run_number}}
+    - name: Build latest 
+      run: docker build . --file Dockerfile --tag my-image-name
